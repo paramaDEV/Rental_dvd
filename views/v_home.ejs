@@ -1,0 +1,38 @@
+<%-include('v_head',{title:'Home'})%>
+<link rel="stylesheet" href="assets/dist/css/home.css" >
+  <body>
+    <nav class="navbar navbar-dark bg-primary">
+      <h3 class="logo text-white mt-1">Cinemax Rental<br></h3>
+      <div class="row mr-2">
+        <div class="navbar-nav d-flex flex-row justify-content-between ">
+          <a class="nav-link active ml-4" href="#">Home</a>
+          <a class="nav-link ml-4" href="#">Manage</a>
+          <a class="nav-link ml-4" href="#">Report</a>
+          <a class="nav-link ml-4" href="#">Master</a>
+        </div>
+        <button class="btn btn-outline-light my-2 my-sm-0 ml-4" data-toggle="modal" data-target="#logoutModal"><b>Logout</b></button>
+      </div>
+      
+    </nav>
+  </body>
+  <!--Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Confirmation Dialog</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Apakah Anda yakin ingin keluar dari aplikasi ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+          <a href="/logout"><button type="button" class="btn btn-success">Yes</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+<%-include('v_foot')%>

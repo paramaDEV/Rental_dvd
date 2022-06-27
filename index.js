@@ -1,3 +1,4 @@
+const routes = require('./routes.js')
 const {MongoClient} = require('mongodb')
 const url = "mongodb://127.0.0.1:27017"
 const client = new MongoClient(url)
@@ -11,16 +12,4 @@ client.connect((error,client)=>{
     }
 })
 
-const express = require('express')
-app.set('view engine','ejs')
-
-const app = express()
-const port = 8001
-
-app.get('/',(req,res)=>{
-    res.send("home")
-})
-
-app.listen(port,()=>{
-    console.log(`Listening to port ${port}`)
-})
+routes.runRoutes(client,db_name)

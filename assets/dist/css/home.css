@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'Russo';
+    src:url('../../fonts/RussoOne-Regular.ttf');
+  }
+body .logo{
+  font-family: 'Russo',sans-serif;
+}

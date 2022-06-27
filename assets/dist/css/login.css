@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'Russo';
+    src:url('../../fonts/RussoOne-Regular.ttf');
+  }
+body .main{
+    background:url('../../background.jpg');
+    background-size : 100%;
+}
+body .main .card .card-header{
+  font-family: 'Russo',sans-serif;
+}
