@@ -1,19 +1,18 @@
 <%-include('v_head',{title:'Home'})%>
+<%-include('v_nav')%>
 <link rel="stylesheet" href="assets/dist/css/home.css" >
+<script src="node_modules/chart.js/dist/chart.js"></script>
   <body>
-    <nav class="navbar navbar-dark bg-primary">
-      <h3 class="logo text-white mt-1">Cinemax Rental<br></h3>
-      <div class="row mr-2">
-        <div class="navbar-nav d-flex flex-row justify-content-between ">
-          <a class="nav-link active ml-4" href="#">Home</a>
-          <a class="nav-link ml-4" href="#">Manage</a>
-          <a class="nav-link ml-4" href="#">Report</a>
-          <a class="nav-link ml-4" href="#">Master</a>
+    <h1 class="mt-4 text-center">Home</h1>
+    <center>
+      <div class="card shadow-lg m-3 mt-4 p-3 d-flex flex-row">
+        <div class="bg-success w-75">
+          d
         </div>
-        <button class="btn btn-outline-light my-2 my-sm-0 ml-4" data-toggle="modal" data-target="#logoutModal"><b>Logout</b></button>
-      </div>
-      
-    </nav>
+        <div class="bg-danger w-25">
+          g
+        </div>
+      </div></center>
   </body>
   <!--Logout Modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
@@ -35,4 +34,41 @@
       </div>
     </div>
   </div>
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+  </script>
 <%-include('v_foot')%>

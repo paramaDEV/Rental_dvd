@@ -1,0 +1,89 @@
+<%-include('v_head',{title:'DVD'})%>
+<%-include('v_nav')%>
+<link rel="stylesheet" href="assets/dist/css/home.css" >
+  <body>
+    <h3 class="mt-4 text-center">Data DVD </h3>
+    <button class="btn btn-success btn-md ml-3" data-toggle="modal" data-target="#addData">Tambah Data</button>
+    <center>
+      <div class="card shadow-lg m-3 mt-4 p-3 d-flex flex-row">
+        <div class="w-100">
+          <table id="example" class="display" style="width:100%">
+              <thead>
+                  <tr>
+                      <th>No</th>
+                      <th>Image</th>
+                      <th>Judul</th>
+                      <th>Harga Sewa</th>
+                      <th>Stok</th>
+                      <th>Aksi</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <% let no = 1;%>
+                <% dvd.forEach(function(e){ %>
+                    <tr>
+                      <th><%= no %></th>
+                      <td><img src="/assets/img/<%= e.gambar%>" height="100px"></td>
+                      <td><%= e.judul%></td>
+                      <td>Rp <%=thousands(e.harga_sewa) %></td>
+                      <td><%= e.stok%></td>
+                      <td><div class="d-flex flex-row">
+                        <button class="btn btn-info btn-sm mr-2">Edit</button>
+                        <form action="/delete/dvd?_method=DELETE" method="POST">
+                          <input type="hidden" name="id" value="<%=e._id%>">
+                          <button type="submit" class="btn btn-danger btn-sm mr-2" onclick="return confirm('Apakah anda yakin?')">Delete</button>
+                        </form>
+                      </div></td>
+                    </tr>
+                    <% no+=1 %>
+                <% }); %>
+              </tbody>
+          </table>
+        </div>
+      </div></center>
+  </body>
+  <!-- Modal -->
+  <div class="modal fade" id="addData" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="addDataLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addDataLabel">Tambah Data</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="/add/dvd" enctype="multipart/form-data">
+            <div class="form-group">
+              <label >Judul DVD</label>
+              <input type="input" class="form-control" name="judul" id="" >
+            </div>
+            <div class="form-group">
+              <label >Gambar</label>
+              <input type="file" class="form-control pb-1 " name="gambar" id="" style="height:45px">
+            </div>
+            <div class="form-group">
+              <label >Harga</label>
+              <input type="input" class="form-control" name="harga" id="" >
+            </div>
+            <div class="form-group">
+              <label >Jumlah Stok</label>
+              <input type="number" min="1" class="form-control" name="stok" id="" value="1">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah anda yakin?')">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/node_modules/jquery/dist/jquery.min.js" ></script>
+  <script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+  </script>
+<%-include('v_foot')%>
