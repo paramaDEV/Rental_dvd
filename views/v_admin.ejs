@@ -1,9 +1,9 @@
-<%-include('v_head',{title:'DVD'})%>
+<%-include('v_head',{title:'Admin'})%>
 <%-include('v_nav')%>
 <link rel="stylesheet" href="assets/dist/css/home.css" >
-<script src="/assets/dist/js/dvd.js"></script>
+<script src="/assets/dist/js/admin.js"></script>
   <body>
-    <h3 class="mt-4 text-center">Data DVD </h3>
+    <h3 class="mt-4 text-center">Data Admin</h3>
     <button class="btn btn-success btn-md ml-3" data-toggle="modal" data-target="#addData">Tambah Data</button>
     <center>
       <div class="card shadow-lg m-3 mt-4 p-3 d-flex flex-row">
@@ -12,25 +12,27 @@
               <thead>
                   <tr>
                       <th>No</th>
-                      <th>Image</th>
-                      <th>Judul</th>
-                      <th>Harga Sewa</th>
-                      <th>Stok</th>
+                      <th>Nama</th>
+                      <th>Username</th>
+                      <th>Password</th>
+                      <th>Last Login</th>
+                      <th>Last Logout</th>
                       <th>Aksi</th>
                   </tr>
               </thead>
               <tbody>
                 <% let no = 1;%>
-                <% dvd.forEach(function(e){ %>
+                <% admin.forEach(function(e){ %>
                     <tr>
                       <th><%= no %></th>
-                      <td><img src="/assets/img/<%= e.gambar%>" height="100px"></td>
-                      <td><%= e.judul%></td>
-                      <td>Rp <%=thousands(e.harga_sewa) %></td>
-                      <td><%= e.stok%></td>
+                      <td><%= e.nama%></td>
+                      <td><%= e.username%></td>
+                      <td><%= e.password%></td>
+                      <td><%= e.last_login%></td>
+                      <td><%= e.last_logout%></td>
                       <td><div class="d-flex flex-row">
-                        <button class="btn btn-info btn-sm mr-2" data-toggle="modal" data-target="#updateData" onclick="setUpdate('<%=e._id%>','<%= e.judul %>','<%= e.harga_sewa %>','<%= e.stok %>')">Edit</button>
-                        <form action="/delete/dvd?_method=DELETE" method="POST">
+                        <button class="btn btn-info btn-sm mr-2" data-toggle="modal" data-target="#updateData" onclick="setUpdate('<%=e._id%>','<%= e.nama%>','<%= e.username%>','<%= e.password%>')">Edit</button>
+                        <form action="/delete/admin?_method=DELETE" method="POST">
                           <input type="hidden" name="id" value="<%=e._id%>">
                           <button type="submit" class="btn btn-danger btn-sm mr-2" onclick="return confirm('Apakah anda yakin?')">Delete</button>
                         </form>
@@ -54,22 +56,18 @@
           </button>
         </div>
         <div class="modal-body">
-          <form method="POST" action="/add/dvd" enctype="multipart/form-data">
+          <form method="POST" action="/add/admin" >
             <div class="form-group">
-              <label >Judul DVD</label>
-              <input type="input" class="form-control" name="judul" id="" >
+              <label >Nama Lengkap</label>
+              <input type="input" class="form-control" name="nama" id="" >
             </div>
             <div class="form-group">
-              <label >Gambar</label>
-              <input type="file" class="form-control pb-1 " name="gambar" id="" style="height:45px">
+              <label >Username</label>
+              <input type="input" class="form-control" name="username" id="" >
             </div>
             <div class="form-group">
-              <label >Harga</label>
-              <input type="input" class="form-control" name="harga" id="" >
-            </div>
-            <div class="form-group">
-              <label >Jumlah Stok</label>
-              <input type="number" min="1" class="form-control" name="stok" id="" value="1">
+              <label >Password</label>
+              <input type="input" class="form-control" name="password" id="" >
             </div>
         </div>
         <div class="modal-footer">
@@ -91,23 +89,19 @@
             </button>
           </div>
           <div class="modal-body">
-            <form method="POST" action="/update/dvd?_method=PUT" enctype="multipart/form-data">
+            <form method="POST" action="/update/admin?_method=PUT">
               <input type="hidden" id="u_id" name="id"> 
               <div class="form-group">
-                <label >Judul DVD</label>
-                <input type="input" class="form-control" name="judul" id="u_judul" >
+                <label >Nama Lengkap</label>
+                <input type="input" class="form-control" name="nama" id="u_nama" >
               </div>
               <div class="form-group">
-                <label >Gambar</label>
-                <input type="file" class="form-control pb-1 " name="gambar" id="" style="height:45px">
+                <label >Username</label>
+                <input type="input" class="form-control" name="username" id="u_username" >
               </div>
               <div class="form-group">
-                <label >Harga</label>
-                <input type="input" class="form-control" name="harga" id="u_harga" >
-              </div>
-              <div class="form-group">
-                <label >Jumlah Stok</label>
-                <input type="number" min="1" class="form-control" name="stok" id="u_stok" value="1">
+                <label >Password</label>
+                <input type="input" class="form-control" name="password" id="u_password" >
               </div>
           </div>
           <div class="modal-footer">

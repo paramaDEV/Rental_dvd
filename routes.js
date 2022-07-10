@@ -8,6 +8,7 @@ const methodOverride = require('method-override')
 const path = require('path')
 const app = express()
 const chart = require('chart.js');
+const { getSystemErrorMap } = require('util')
 const port = 8001
 
 const image_storage = multer.diskStorage({
@@ -60,13 +61,19 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
 
     // 2. Post Login
     app.post('/',(req,res)=>{
+        const date = new Date();
         db.collection('admin').findOne({
             username:req.body.username,
             password:req.body.password
         },(error,result)=>{ 
             if(result){   
                 res.cookie("session_cookie_id",result._id.toString())
-                res.redirect('/home') 
+                res.redirect('/home')
+                db.collection('admin').updateOne(
+                {_id:ObjectId(result._id)}
+                ,{$set:{
+                        last_login : date.getFullYear()+"-"+(parseInt(date.getMonth())+1)+"-"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
+                }}) 
             }else{
                 res.render('v_login',{alert:true})
             }
@@ -94,13 +101,26 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
     // 3. Dvd Page
     app.get('/dvd',(req,res)=>{
         const thousands = require('thousands');
-        db.collection('dvd').find().toArray()
-        .then((result)=>{
-            res.render('v_dvd',{dvd:result,thousands:thousands})
-        })
-        .catch((error)=>{
-            console.log(error)
-        });
+        if(req.cookies.session_cookie_id){
+            try{
+                db.collection('admin')
+                .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
+                    if(result){
+                        db.collection('dvd').find().toArray()
+                        .then((result)=>{
+                            res.render('v_dvd',{dvd:result,thousands:thousands})
+                        })
+                        .catch((error)=>{
+                            console.log(error)
+                        });
+                    }
+                })
+            }catch(err){
+                res.redirect('/')
+            }
+        }else{
+            res.redirect('/')
+        }
     })
 
     // 4. Insert Data Dvd 
@@ -110,22 +130,120 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
             gambar:req.file.filename,
             stok:req.body.stok,
             harga_sewa:req.body.harga
+        }).then(()=>{   
+            res.redirect('/dvd')
         })
-        res.redirect('/dvd')
     })
 
     // 5. Delete Data Dvd
     app.delete('/delete/dvd',(req,res)=>{
         db.collection('dvd').deleteOne({
             _id : ObjectId(req.body.id)
+        }).then(()=>{  
+            res.redirect('/dvd')
         })
-        //res.send(req.body)
-        res.redirect('/dvd')
     })
 
+    // 6. Update Data DVD
+    app.put('/update/dvd',image_upload.single('gambar'),(req,res)=>{
+        if(req.file){
+            db.collection('dvd').updateOne({
+                _id : ObjectId(req.body.id)},
+                {$set:{
+                    judul : req.body.judul,
+                    stok : req.body.stok,
+                    harga_sewa : req.body.harga,
+                    gambar: req.file.filename
+                }
+            }).then(()=>{  
+                res.redirect('/dvd')
+            })
+        }else{
+            db.collection('dvd').updateOne({
+                _id : ObjectId(req.body.id)},
+                {$set:{
+                    judul : req.body.judul,
+                    stok : req.body.stok,
+                    harga_sewa : req.body.harga
+                }
+            }).then(()=>{  
+                res.redirect('/dvd')
+            })
+        }
+    })
+
+     // 7. Admin Page
+     app.get('/admin',(req,res)=>{
+        if(req.cookies.session_cookie_id){
+            try{
+                db.collection('admin')
+                .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
+                    if(result){
+                        db.collection('admin').find().toArray()
+                        .then((result)=>{
+                            res.render('v_admin',{admin:result})
+                        })
+                        .catch((error)=>{
+                            console.log(error)
+                        });
+                    }
+                })
+            }catch(err){
+                res.redirect('/')
+            }
+        }else{
+            res.redirect('/')
+        }
+    })
+
+    // 8. Insert Data Admin
+    app.post('/add/admin',(req,res)=>{
+        db.collection('admin').insertOne({
+            nama:req.body.nama,
+            username:req.body.username,
+            password:req.body.password,
+            last_login : "",
+            last_logout : ""
+        }).then(()=>{
+            res.redirect('/admin')
+        })
+    })
+
+    // 9. Delete Data Admin
+    app.delete('/delete/admin',(req,res)=>{
+        db.collection('admin').deleteOne({
+            _id : ObjectId(req.body.id)
+        }).then(()=>{
+            res.redirect('/admin')
+        })
+    })
+
+    // 10. Update Data Admin
+    app.put('/update/admin',(req,res)=>{
+        db.collection('admin').updateOne({
+        _id:ObjectId(req.body.id)},{
+            $set:{
+               nama : req.body.nama,
+               username : req.body.username,
+               password : req.body.password 
+            }
+        }).then(()=>{
+            res.redirect('/admin')
+        })
+    })
+
+
     app.get('/logout',(req,res)=>{
-        res.clearCookie('session_cookie_id')
-        res.redirect('/')    
+        const date = new Date();
+        db.collection('admin').updateOne(
+            {_id:ObjectId(req.cookies.session_cookie_id)}
+            ,{$set:{
+                last_logout : date.getFullYear()+"-"+(parseInt(date.getMonth())+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
+            }}).then(()=>{
+                res.clearCookie('session_cookie_id')
+                res.redirect('/') 
+            })
+           
     })
     app.get('/genre',(req,res)=>{
         res.render('v_genre')   
