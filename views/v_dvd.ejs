@@ -1,6 +1,8 @@
 <%-include('v_head',{title:'DVD'})%>
 <%-include('v_nav')%>
 <link rel="stylesheet" href="assets/dist/css/home.css" >
+<script src="/node_modules/jquery/dist/jquery.min.js" ></script>
+<script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/dist/js/dvd.js"></script>
   <body>
     <h3 class="mt-4 text-center">Data DVD </h3>
@@ -21,7 +23,7 @@
               </thead>
               <tbody>
                 <% let no = 1;%>
-                <% dvd.forEach(function(e){ %>
+                <% dvd.reverse().forEach(function(e){ %>
                     <tr>
                       <th><%= no %></th>
                       <td><img src="/assets/img/<%= e.gambar%>" height="100px"></td>
@@ -118,11 +120,4 @@
         </div>
       </div>
     </div>
-  <script src="/node_modules/jquery/dist/jquery.min.js" ></script>
-  <script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script>
-    $(document).ready(function () {
-        $('#dvd').DataTable();
-    });
-  </script>
 <%-include('v_foot')%>

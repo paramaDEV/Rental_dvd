@@ -1,0 +1,54 @@
+<%-include('v_head',{title:'Peminjaman'})%>
+<%-include('v_nav')%>
+<link rel="stylesheet" href="assets/dist/css/home.css" >
+<script src="/assets/dist/js/admin.js"></script>
+  <body>
+    <h3 class="mt-4 text-center">Data Peminjaman</h3>
+    <a href="/v_add_peminjaman">
+      <button class="btn btn-success btn-md ml-3" data-toggle="modal" data-target="#addData">Tambah Data</button>
+    </a>
+    <center>
+      <div class="card shadow-md m-3 mt-4 p-3 d-flex flex-row">
+        <div class="w-100">
+          <table id="dvd" class="display" style="width:100%">
+              <thead>
+                  <tr>
+                      <th>No</th>
+                      <th>Nama</th>
+                      <th>No Telepon</th>
+                      <th>Alamat</th>
+                      <th>Tanggal Peminjaman</th>
+                      <th>Batas Peminjaman</th>
+                      <th>Total Biaya</th>
+                      <th>Aksi</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <% let no=1 %>
+                <% peminjaman.forEach(e=>{%>
+                  <tr>
+                    <td><%=e.no%></td>
+                    <td><%=e.peminjam%></td>
+                    <td><%=e.telepon%></td>
+                    <td><%=e.alamat%></td>
+                    <td><%=e.tanggal_pinjam%></td>
+                    <td><%=e.batas_pinjam%></td>
+                    <td>Rp <%=thousands(e.total_harga,'.')%></td>
+                    <td><div class="d-flex">
+                      <button class="btn btn-sm btn-info">Detail</button>
+                    </div></td>
+                </tr>
+                <% no++})%>
+              </tbody>
+          </table>
+        </div>
+      </div></center>
+  </body>
+  <script src="/node_modules/jquery/dist/jquery.min.js" ></script>
+  <script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+        $('#dvd').DataTable();
+    });
+  </script>
+<%-include('v_foot')%>

@@ -1,3 +1,6 @@
+$(document).ready(function () {
+  $('#dvd').DataTable();
+});
 let setUpdate = (id,judul,harga,stok)=>{
     let u_id = document.querySelector('#u_id');
     let u_judul = document.querySelector('#u_judul');

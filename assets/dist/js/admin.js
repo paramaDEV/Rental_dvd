@@ -1,3 +1,7 @@
+$(document).ready(function () {
+  $('#admin').DataTable();
+});
+
 let setUpdate = (id,nama,username,password)=>{
   let u_id = document.querySelector('#u_id');
   let u_nama = document.querySelector('#u_nama');

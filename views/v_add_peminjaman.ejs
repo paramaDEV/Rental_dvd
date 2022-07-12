@@ -1,0 +1,86 @@
+<%-include('v_head',{title:'Add Peminjaman'})%>
+<%-include('v_nav')%>
+<link rel="stylesheet" href="assets/dist/css/home.css" >
+<script src="/node_modules/jquery/dist/jquery.min.js" ></script>
+<script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/dist/js/add_peminjaman.js" ></script>
+  <body>
+    <h3 class="mt-4 text-center">Tambah Peminjaman </h3>
+    <br>
+    <div class="p-4 card m-3 shadow-xl" style="width:98%">
+      <form method="POST" name="add_peminjaman" action="/add_peminjaman">
+        <div class="row">
+          <div class="col">
+            <input type="text" required class="form-control" name="nama" placeholder="Nama Lengkap">
+          </div>
+          <div class="col">
+            <input type="text" required class="form-control" name="telp" placeholder="No Telepon">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <input type="text" required class="form-control" name="alamat" placeholder="Alamat">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col ">
+            <label >Tanggal Peminjaman: </label>
+            <input type="date" required class="form-control" name="tgl_pinjam" placeholder="Tanggal Pinjam">
+          </div>
+          <div class="col">
+            <label >Batas Peminjaman: </label>
+            <input type="date" required class="form-control" name="bts_pinjam" placeholder="Batas Pinjam">
+          </div>
+        </div>
+        <table class="table table-bordered mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Judul DVD</th>
+              <th scope="col">Harga</th>
+              <th scope="col">Jumlah</th>
+              <th scope="col">Total</th>
+              <th scope="col">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="dvd_items">
+          
+          </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary mt-3" onclick="submitForm('add_peminjaman')">Submit</button>
+      </form>
+    </div>
+    <center>
+      <div class="card shadow-md m-3 mt-4 p-3 d-flex flex-row">
+        <div class="w-100">
+          <table id="dvd" class="display" style="width:100%">
+              <thead>
+                  <tr>
+                      <th>No</th>
+                      <th>Judul</th>
+                      <th>Harga Sewa</th>
+                      <th>Stok Tersedia</th>
+                      <th>Aksi</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <% let no = 1;%>
+                <% dvd.reverse().forEach(function(e){ %>
+                    <tr>
+                      <th><%= no %></th>
+                      <td><%= e.judul%></td>
+                      <td>Rp <%=thousands(e.harga_sewa,'.') %></td>
+                      <td><input type="text" id="stok_<%=e._id%>" readonly value="<%= e.stok%>" style="border:none;width:40px;background-color:none"></td>
+                      <td id="btn_<%=e._id%>">
+                        <% if(e.stok>0){%>
+                          <button class="btn btn-success btn-sm" id="add_<%=e._id%>" onclick="setItemDVD('<%=e._id%>','<%=e.judul%>','<%=thousands(e.harga_sewa,`.`)%>')">Add</button>
+                        <% }%>
+                      </td>
+                    </tr>
+                    <% no+=1 %>
+                <% }); %>
+              </tbody>
+          </table>
+        </div>
+      </div></center>
+  </body>
+<%-include('v_foot')%>

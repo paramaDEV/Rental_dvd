@@ -9,6 +9,7 @@ const path = require('path')
 const app = express()
 const chart = require('chart.js');
 const { getSystemErrorMap } = require('util')
+const { exit } = require('process')
 const port = 8001
 
 const image_storage = multer.diskStorage({
@@ -37,7 +38,7 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
     app.set('view engine','ejs')
     app.use('/assets',express.static(path.join(__dirname,'assets/')))
     app.use('/node_modules',express.static(path.join(__dirname,'node_modules/')))
-    app.use(body_parser.urlencoded({ extended: false }))
+    app.use(body_parser.urlencoded({ extended: true }))
     app.use(cookieParser())
     app.use(methodOverride('_method'))
 
@@ -72,7 +73,7 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
                 db.collection('admin').updateOne(
                 {_id:ObjectId(result._id)}
                 ,{$set:{
-                        last_login : date.getFullYear()+"-"+(parseInt(date.getMonth())+1)+"-"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
+                        last_login : date.getFullYear()+"-"+(parseInt(date.getMonth())+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
                 }}) 
             }else{
                 res.render('v_login',{alert:true})
@@ -102,7 +103,6 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
     app.get('/dvd',(req,res)=>{
         const thousands = require('thousands');
         if(req.cookies.session_cookie_id){
-            try{
                 db.collection('admin')
                 .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
                     if(result){
@@ -115,9 +115,6 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
                         });
                     }
                 })
-            }catch(err){
-                res.redirect('/')
-            }
         }else{
             res.redirect('/')
         }
@@ -175,7 +172,6 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
      // 7. Admin Page
      app.get('/admin',(req,res)=>{
         if(req.cookies.session_cookie_id){
-            try{
                 db.collection('admin')
                 .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
                     if(result){
@@ -188,9 +184,6 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
                         });
                     }
                 })
-            }catch(err){
-                res.redirect('/')
-            }
         }else{
             res.redirect('/')
         }
@@ -232,6 +225,79 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
         })
     })
 
+    // 11. Peminjaman Page
+    app.get('/peminjaman',(req,res)=>{
+        let thousands = require('thousands')
+        if(req.cookies.session_cookie_id){
+            db.collection('admin')
+            .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
+                if(result){
+                    db.collection('peminjaman').find().toArray()
+                    .then((result)=>{
+                        res.render('v_peminjaman',{peminjaman:result,thousands:thousands})
+                    })
+                    .catch((error)=>{
+                        console.log(error)
+                    });
+                }
+            })
+        }else{
+            res.redirect('/')
+        }
+    })
+
+    // 12. Tambah Peminjaman Page
+    app.get('/v_add_peminjaman',(req,res)=>{
+        const thousands = require('thousands');
+        if(req.cookies.session_cookie_id){
+            try{
+                db.collection('admin')
+                .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
+                    if(result){
+                        db.collection('dvd').find().toArray()
+                        .then((result)=>{
+                            res.render('v_add_peminjaman',{dvd:result,thousands:thousands})
+                        })
+                        .catch((error)=>{
+                            console.log(error)
+                        });
+                    }
+                })
+            }catch(err){
+                res.send(error)
+            }
+        }else{
+            res.redirect('/')
+        }
+    })
+
+    // 13. Tambah Peminjaman
+    app.post('/add_peminjaman',(req,res)=>{
+        let item_dvd = []
+        let total = 0
+        if(!req.body.judul_item){
+            res.redirect('/add_peminjaman')
+        }
+        req.body.judul_item.forEach((e,i)=>{
+            let total_temp = req.body.harga_item[i].split(".").join("")
+            total+=parseInt(total_temp)
+            item_dvd.push({
+               "judul" : e,
+               "jumlah" : req.body.jumlah_item[i],
+               "harga" : req.body.harga_item[i].split(".").join("")
+            })
+        })
+        db.collection('peminjaman').insertOne({
+            peminjam : req.body.nama,
+            telepon  : req.body.telp,
+            alamat   : req.body.alamat,
+            tanggal_pinjam : req.body.tgl_pinjam,
+            batas_pinjam : req.body.bts_pinjam,
+            item : item_dvd,
+            total_harga : total
+        })
+        res.redirect('/peminjaman')
+    })
 
     app.get('/logout',(req,res)=>{
         const date = new Date();
@@ -244,9 +310,6 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
                 res.redirect('/') 
             })
            
-    })
-    app.get('/genre',(req,res)=>{
-        res.render('v_genre')   
     })
     app.listen(port,()=>{
         console.log(`Listening to port ${port}`)

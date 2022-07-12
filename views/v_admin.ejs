@@ -1,14 +1,16 @@
 <%-include('v_head',{title:'Admin'})%>
 <%-include('v_nav')%>
 <link rel="stylesheet" href="assets/dist/css/home.css" >
+<script src="/node_modules/jquery/dist/jquery.min.js" ></script>
+<script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/dist/js/admin.js"></script>
   <body>
     <h3 class="mt-4 text-center">Data Admin</h3>
     <button class="btn btn-success btn-md ml-3" data-toggle="modal" data-target="#addData">Tambah Data</button>
     <center>
-      <div class="card shadow-lg m-3 mt-4 p-3 d-flex flex-row">
+      <div class="card shadow-md m-3 mt-4 p-3 d-flex flex-row">
         <div class="w-100">
-          <table id="dvd" class="display" style="width:100%">
+          <table id="admin" class="display" style="width:100%">
               <thead>
                   <tr>
                       <th>No</th>
@@ -22,7 +24,7 @@
               </thead>
               <tbody>
                 <% let no = 1;%>
-                <% admin.forEach(function(e){ %>
+                <% admin.reverse().forEach(function(e){ %>
                     <tr>
                       <th><%= no %></th>
                       <td><%= e.nama%></td>
@@ -112,11 +114,4 @@
         </div>
       </div>
     </div>
-  <script src="/node_modules/jquery/dist/jquery.min.js" ></script>
-  <script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script>
-    $(document).ready(function () {
-        $('#dvd').DataTable();
-    });
-  </script>
 <%-include('v_foot')%>
