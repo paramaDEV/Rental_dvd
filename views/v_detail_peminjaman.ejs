@@ -1,0 +1,82 @@
+<%-include('v_head',{title:'Detail Peminjaman'})%>
+<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+<%-include('v_nav')%>
+<link rel="stylesheet" href="assets/dist/css/home.css" >
+<script src="/node_modules/jquery/dist/jquery.min.js" ></script>
+<script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/dist/js/add_peminjaman.js" ></script>
+  <body>
+    <h3 class="mt-4 text-center">Detail Peminjaman </h3>
+    <br>
+    <div class="p-4 card m-3 shadow-xl" style="width:98%">
+        <div class="row">
+          <div class="col">
+            <input type="text" disabled required class="form-control" name="nama" placeholder="Nama Lengkap" value="<%=peminjaman.peminjam%>">
+          </div>
+          <div class="col">
+            <input type="text" disabled required class="form-control" name="telp" placeholder="No Telepon" value="<%=peminjaman.telepon%>">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <input type="text" disabled required class="form-control" name="alamat" placeholder="Alamat" value="<%=peminjaman.alamat%>">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <%
+            let no = 1
+            let month = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"] 
+            let date_a=new Date(peminjaman.tanggal_pinjam)
+            let date_b=new Date(peminjaman.batas_pinjam)%>
+          <div class="col ">
+            <label >Tanggal Peminjaman: </label>
+            <input type="text" disabled required class="form-control" name="tgl_pinjam" placeholder="Tanggal Pinjam" value="<%=date_a.getDate()%> <%=month[date_a.getMonth()]%> <%=date_a.getYear()%>">
+          </div>
+          <div class="col">
+            <label >Batas Peminjaman: </label>
+            <input type="text" disabled required class="form-control" name="bts_pinjam" placeholder="Batas Pinjam" value="<%=date_b.getDate()%> <%=month[date_b.getMonth()]%> <%=date_b.getYear()%>">
+          </div>
+        </div>
+        <table class="table table-bordered mt-3">
+          <thead>
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Judul DVD</th>
+              <th scope="col">Harga</th>
+              <th scope="col">Jumlah</th>
+              <th scope="col">Total</th>
+              <th scope="col">Status</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody id="dvd_items">
+            <%peminjaman.item.forEach(e=>{%>
+              <tr>
+                <td scope="col"><%=no%></td>
+                <td scope="col"><%=e.judul%></td>
+                <td scope="col">Rp <%=thousands(e.harga,'.')%></td>
+                <td scope="col"><%=e.jumlah%></td>
+                <td scope="col">Rp <%=thousands(e.harga*e.jumlah,'.')%></td>
+                <%if(!e.status){%>
+                  <td scope="col" class="text-danger"><b>Belum Kembali</b></td>
+                <%}else{%>
+                   <td scope="col" class="text-danger"><b><%=e.status%></b></td>
+                <%}%>
+                <td scope="col">
+                <select name="" class="form-control">
+                  <option value="kembali">Kembali</option>
+                  <option value="hilang">Hilang</option>
+                  <option value="rusak">Rusak</option>
+                </select>  
+                </td>
+              </tr>
+            <% no++ })%>
+          </tbody>
+        </table>
+        <div class="col mb-3">
+            <label ><b>Total Biaya : Rp <%= thousands(peminjaman.total_harga)%></b></label>
+          </div>
+        <button class="btn btn-md btn-success" style="width:200px">Tandai Selesai</button>
+    </div>
+  </body>
+<%-include('v_foot')%>

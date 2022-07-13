@@ -1,31 +1,62 @@
 $(document).ready(function () {
   $('#dvd').DataTable();
 });
-
-let index = 1
-
 let setItemDVD = (id,judul,harga)=>{
   let tbody = document.querySelector(`#dvd_items`)
+  let jumlah_item = document.querySelector(`#jumlah_${id}`)
+  let item = document.querySelector(`#item${id}`)
   let harga_sewa=harga.split('.').join('')
-  let total =1*harga_sewa
-  tbody.innerHTML+=`
-  <tr id="item${id}_${index}">
+  
+  if(jumlah_item ){
+    let total =(parseInt(jumlah_item.value)+1)*harga_sewa
+    item.innerHTML=`
     <td scope="col">${judul}</td>
     <td scope="col">Rp ${harga}</td>
-    <td scope="col">${1}</td>
+    <td scope="col">${parseInt(jumlah_item.value)+1}</td>
     <td scope="col">Rp ${total.toLocaleString('ID')}</td>
     <input type="hidden" name="judul_item[]" required value="${judul}">
-    <input type="hidden" name="jumlah_item[]" required value="${1}">
-    <input type="hidden" name="harga_item[]" required value="${harga}">
-    <td scope="col"><button type="button" class="btn btn-danger btn-sm" onclick="removeItemDVD('${id}','${index}','${judul}','${harga}')">Remove</button></td>
-  </tr>
-  `
-  index++
+    <input type="hidden" name="jumlah_item[]" id="jumlah_${id}" required value="${parseInt(jumlah_item.value)+1}">
+    <input type="hidden" name="harga_item[]" required value="${total.toLocaleString('ID')}">
+    <td scope="col"><button type="button" class="btn btn-danger btn-sm" onclick="removeItemDVD('${id}','${judul}','${harga}')">Remove</button></td>
+    `
+  }else{
+    let total =1*harga_sewa
+    tbody.innerHTML+=`
+    <tr id="item${id}">
+      <td scope="col">${judul}</td>
+      <td scope="col">Rp ${harga}</td>
+      <td scope="col">${1}</td>
+      <td scope="col">Rp ${total.toLocaleString('ID')}</td>
+      <input type="hidden" name="judul_item[]" required value="${judul}">
+      <input type="hidden" name="jumlah_item[]" id="jumlah_${id}" required value="${1}">
+      <input type="hidden" name="harga_item[]" required value="${harga}">
+      <td scope="col"><button type="button" class="btn btn-danger btn-sm" onclick="removeItemDVD('${id}','${judul}','${harga}')">Remove</button></td>
+    </tr>
+    `
+  }
   minStock(id)
 }
 
-let removeItemDVD = (id,index,judul,harga) =>{
-  document.querySelector(`#item${id}_${index}`).remove()
+let removeItemDVD = (id,judul,harga) =>{
+  let item = document.querySelector(`#item${id}`)
+  let jumlah_item = document.querySelector(`#jumlah_${id}`)
+  if(parseInt(jumlah_item.value)==1){
+    item.remove()
+  }else{
+    let harga_sewa=harga.split('.').join('')
+    let total =(parseInt(jumlah_item.value)-1)*harga_sewa
+    jumlah_item.setAttribute('value',parseInt(jumlah_item.value)-1)
+    item.innerHTML=`
+    <td scope="col">${judul}</td>
+    <td scope="col">Rp ${harga}</td>
+    <td scope="col">${parseInt(jumlah_item.value)}</td>
+    <td scope="col">Rp ${total.toLocaleString('ID')}</td>
+    <input type="hidden" name="judul_item[]" required value="${judul}">
+    <input type="hidden" name="jumlah_item[]" id="jumlah_${id}" required value="${parseInt(jumlah_item.value)}">
+    <input type="hidden" name="harga_item[]" required value="${total.toLocaleString('ID')}">
+    <td scope="col"><button type="button" class="btn btn-danger btn-sm" onclick="removeItemDVD('${id}','${judul}','${harga}')">Remove</button></td>
+    `
+  }
   addStock(id,judul,harga)
 }
 

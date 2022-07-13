@@ -1,4 +1,5 @@
 <%-include('v_head',{title:'Add Peminjaman'})%>
+ <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 <%-include('v_nav')%>
 <link rel="stylesheet" href="assets/dist/css/home.css" >
 <script src="/node_modules/jquery/dist/jquery.min.js" ></script>
@@ -46,41 +47,62 @@
           
           </tbody>
         </table>
-        <button type="submit" class="btn btn-primary mt-3" onclick="submitForm('add_peminjaman')">Submit</button>
+        <button type="submit" class="btn btn-success mt-3" onclick="submitForm('add_peminjaman')">Submit</button>
+        <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#staticBackdrop">
+          Add Item
+        </button>
       </form>
     </div>
-    <center>
-      <div class="card shadow-md m-3 mt-4 p-3 d-flex flex-row">
-        <div class="w-100">
-          <table id="dvd" class="display" style="width:100%">
-              <thead>
-                  <tr>
-                      <th>No</th>
-                      <th>Judul</th>
-                      <th>Harga Sewa</th>
-                      <th>Stok Tersedia</th>
-                      <th>Aksi</th>
-                  </tr>
-              </thead>
-              <tbody>
-                <% let no = 1;%>
-                <% dvd.reverse().forEach(function(e){ %>
-                    <tr>
-                      <th><%= no %></th>
-                      <td><%= e.judul%></td>
-                      <td>Rp <%=thousands(e.harga_sewa,'.') %></td>
-                      <td><input type="text" id="stok_<%=e._id%>" readonly value="<%= e.stok%>" style="border:none;width:40px;background-color:none"></td>
-                      <td id="btn_<%=e._id%>">
-                        <% if(e.stok>0){%>
-                          <button class="btn btn-success btn-sm" id="add_<%=e._id%>" onclick="setItemDVD('<%=e._id%>','<%=e.judul%>','<%=thousands(e.harga_sewa,`.`)%>')">Add</button>
-                        <% }%>
-                      </td>
-                    </tr>
-                    <% no+=1 %>
-                <% }); %>
-              </tbody>
-          </table>
-        </div>
-      </div></center>
   </body>
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Pilih Daftar DVD</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <center>
+            <div class="card shadow-md m-3 mt-4 p-3 d-flex flex-row">
+              <div class="w-100">
+                <table id="dvd" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Judul</th>
+                            <th>Harga Sewa</th>
+                            <th>Stok Tersedia</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <% let no = 1;%>
+                      <% dvd.reverse().forEach(function(e){ %>
+                          <tr>
+                            <th><%= no %></th>
+                            <td><%= e.judul%></td>
+                            <td>Rp <%=thousands(e.harga_sewa,'.') %></td>
+                            <td><input type="text" id="stok_<%=e._id%>" readonly value="<%= e.stok%>" style="border:none;width:40px;background-color:none"></td>
+                            <td id="btn_<%=e._id%>">
+                              <% if(e.stok>0){%>
+                                <button class="btn btn-success btn-sm" id="add_<%=e._id%>" onclick="setItemDVD('<%=e._id%>','<%=e.judul%>','<%=thousands(e.harga_sewa,`.`)%>')">Add</button>
+                              <% }%>
+                            </td>
+                          </tr>
+                          <% no+=1 %>
+                      <% }); %>
+                    </tbody>
+                </table>
+              </div>
+            </div></center>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <%-include('v_foot')%>

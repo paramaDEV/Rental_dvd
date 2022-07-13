@@ -299,6 +299,16 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
         res.redirect('/peminjaman')
     })
 
+    // 14. Detail Peminjaman
+    app.get('/detail_peminjaman/:id',(req,res)=>{
+        const thousands = require('thousands');
+        db.collection('peminjaman').findOne({
+            _id : ObjectId(req.params)
+        }).then((result)=>{
+           res.render('v_detail_peminjaman',{peminjaman:result,thousands:thousands})
+        })
+    })
+
     app.get('/logout',(req,res)=>{
         const date = new Date();
         db.collection('admin').updateOne(
