@@ -309,6 +309,16 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
         })
     })
 
+    // 15. Selesai Peminjaman
+    app.post('/selesai_peminjaman',(req,res)=>{
+        db.collection('peminjaman').updateOne(
+            {_id:ObjectId(req.body.id)}
+            ,{$set:{
+                status : "Kembali"
+            }})
+        res.redirect(`/detail_peminjaman/${req.body.id}`)
+    })
+
     app.get('/logout',(req,res)=>{
         const date = new Date();
         db.collection('admin').updateOne(

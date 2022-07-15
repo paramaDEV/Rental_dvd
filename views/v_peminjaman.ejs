@@ -31,9 +31,10 @@
                   <%
                     let date_a=new Date(e.tanggal_pinjam)
                     let date_b=new Date(e.batas_pinjam)
+                    let date_now=new Date()
                   %>
                   <tr>
-                    <td><%=e.no%></td>
+                    <td><%=no%></td>
                     <td><%=e.peminjam%></td>
                     <td><%=e.telepon%></td>
                     <td><%=e.alamat%></td>
@@ -41,9 +42,13 @@
                     <td><%=date_b.getDate()%> <%=month[date_b.getMonth()]%> <%=date_b.getYear()%></td>
                     <td>Rp <%=thousands(e.total_harga,'.')%></td>
                     <%if(!e.status){%>
-                      <td scope="col" class="text-danger"><b>Belum Kembali</b></td>
+                      <%if(date_now.getTime()>date_b.getTime()){%>
+                        <td scope="col" class="text-danger"><b>Belum Kembali dan Terlambat</b></td>
+                      <%}else{%>
+                        <td scope="col" class="text-danger"><b>Belum Kembali</b></td>
+                      <%}%>
                     <%}else{%>
-                      <td scope="col" class="text-danger"><b><%=e.status%></b></td>
+                      <td scope="col" class="text-success"><b><%=e.status%></b></td>
                     <%}%>
                     <td><div class="d-flex">
                       <a href="/detail_peminjaman/<%=e._id%>"><button class="btn btn-sm btn-info">Detail</button></a>
