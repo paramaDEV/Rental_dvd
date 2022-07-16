@@ -1,7 +1,7 @@
 $(document).ready(function () {
   $('#dvd').DataTable();
 });
-let setItemDVD = (id,judul,harga)=>{
+let setItemDVD = (id,judul,harga,stok)=>{
   let tbody = document.querySelector(`#dvd_items`)
   let jumlah_item = document.querySelector(`#jumlah_${id}`)
   let item = document.querySelector(`#item${id}`)
@@ -17,6 +17,8 @@ let setItemDVD = (id,judul,harga)=>{
     <input type="hidden" name="judul_item[]" required value="${judul}">
     <input type="hidden" name="jumlah_item[]" id="jumlah_${id}" required value="${parseInt(jumlah_item.value)+1}">
     <input type="hidden" name="harga_item[]" required value="${total.toLocaleString('ID')}">
+    <input type="hidden" name="stok[]" value="${stok}">
+    <input type="hidden" name="id[]" value="${id}">
     <td scope="col"><button type="button" class="btn btn-danger btn-sm" onclick="removeItemDVD('${id}','${judul}','${harga}')">Remove</button></td>
     `
   }else{
@@ -30,6 +32,8 @@ let setItemDVD = (id,judul,harga)=>{
       <input type="hidden" name="judul_item[]" required value="${judul}">
       <input type="hidden" name="jumlah_item[]" id="jumlah_${id}" required value="${1}">
       <input type="hidden" name="harga_item[]" required value="${harga}">
+      <input type="hidden" name="stok[]" value="${stok}">
+      <input type="hidden" name="id[]" value="${id}">
       <td scope="col"><button type="button" class="btn btn-danger btn-sm" onclick="removeItemDVD('${id}','${judul}','${harga}')">Remove</button></td>
     </tr>
     `
@@ -79,6 +83,19 @@ let addStock = (id,judul,harga)=>{
   }
 }
 
-let submitFom = name =>{
-    document.forms[name].submit();
+
+let confirmForm = name=>{
+  Swal.fire({
+    title: 'Apakah anda yakin ?',
+    text: "Pastikan data sudah benar !",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.forms[name].submit();
+    }
+  })
 }

@@ -1,0 +1,98 @@
+<%-include('v_head',{title:'Keuangan'})%>
+<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+<%-include('v_nav')%>
+<link rel="stylesheet" href="assets/dist/css/home.css" >
+<link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+<script src="/node_modules/sweetalert2/dist/sweetalert2.min.js"></script>
+<script src="/node_modules/jquery/dist/jquery.min.js" ></script>
+<script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/dist/js/keuangan.js"></script>
+  <body>
+    <h3 class="mt-4 text-center">Data Keuangan </h3>
+    <button class="btn btn-success btn-md ml-3" data-toggle="modal" data-target="#addData">Tambah Data</button>
+    <center>
+      <div class="card shadow-lg m-3 mt-4 p-3 d-flex flex-row">
+        <div class="w-100">
+          <table id="keuangan" class="display" style="width:100%">
+              <thead>
+                  <tr>
+                      <th>No</th>
+                      <th>Tanggal</th>
+                      <th>Kategori</th>
+                      <th>Status</th>
+                      <th>Catatan</th>
+                      <th>Jumlah</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <% let no = 1;%>
+                <% keuangan.reverse().forEach(e=>{%>
+                <% let date = new Date(e.tanggal)
+                      let month = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]%>
+                    <tr>
+                      <td><%=no%></td>
+                      <td><%=date.getDate()%> <%=month[date.getMonth()]%> <%=date.getYear()%></td>
+                      <td><%=e.kategori%></td>
+                      <td><%=e.status%></td>
+                      <td><%=e.catatan%></td>
+                      <td <%if(e.status=="Pemasukan"){%>
+                            class="text-success"
+                        <%}else if(e.status=="Pengeluaran"){%>
+                            class="text-danger"
+                        <%}%>><b>Rp <%= thousands(e.jumlah)%></b></td>
+                  </tr>
+                <%no++ })%>
+              </tbody>
+          </table>
+        </div>
+      </div></center>
+  </body>
+  <!-- Modal 1-->
+  <div class="modal fade" id="addData" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="addDataLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addDataLabel">Tambah Data</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" name="addData" action="/tambah_keuangan" >
+            <div class="form-group">
+              <label >Status</label>
+              <select name="status" class="form-control">
+                <option value="Pemasukan">Pemasukan</option>
+                <option value="Pengeluaran">Pengeluaran</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label >Kategori</label>
+              <select name="kategori" class="form-control">
+                <option value="Denda">Denda</option>
+                <option value="Inventaris">Inventaris</option>
+                <option value="Biaya Lain">Biaya Lain</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label >Tanggal</label>
+              <input type="date" class="form-control" name="tanggal">
+            </div>
+            <div class="form-group">
+              <label >Jumlah</label>
+              <input type="text" class="form-control" name="jumlah">
+            </div>
+            <div class="form-group">
+              <label >Catatan</label>
+              <textarea name="catatan" class="form-control" id="" cols="12" rows="4"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="confirmForm('addData')">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<%-include('v_foot')%>

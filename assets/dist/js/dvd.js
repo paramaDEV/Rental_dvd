@@ -11,3 +11,19 @@ let setUpdate = (id,judul,harga,stok)=>{
     u_harga.value=harga;
     u_stok.value =stok;
   }
+
+let confirmForm = name=>{
+  Swal.fire({
+    title: 'Apakah anda yakin ?',
+    text: "Pastikan data sudah benar !",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.forms[name].submit();
+    }
+  })
+}

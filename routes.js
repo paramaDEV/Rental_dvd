@@ -8,8 +8,7 @@ const methodOverride = require('method-override')
 const path = require('path')
 const app = express()
 const chart = require('chart.js');
-const { getSystemErrorMap } = require('util')
-const { exit } = require('process')
+const Swal = require('sweetalert2')
 const port = 8001
 
 const image_storage = multer.diskStorage({
@@ -125,10 +124,10 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
         db.collection('dvd').insertOne({
             judul:req.body.judul,
             gambar:req.file.filename,
-            stok:req.body.stok,
+            stok:parseInt(req.body.stok),
             harga_sewa:req.body.harga
         }).then(()=>{   
-            res.redirect('/dvd')
+         res.redirect('/dvd')
         })
     })
 
@@ -148,7 +147,7 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
                 _id : ObjectId(req.body.id)},
                 {$set:{
                     judul : req.body.judul,
-                    stok : req.body.stok,
+                    stok : parseInt(req.body.stok),
                     harga_sewa : req.body.harga,
                     gambar: req.file.filename
                 }
@@ -275,16 +274,27 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
     app.post('/add_peminjaman',(req,res)=>{
         let item_dvd = []
         let total = 0
+        let date= new Date()
         if(!req.body.judul_item){
             res.redirect('/add_peminjaman')
         }
+
         req.body.judul_item.forEach((e,i)=>{
             let total_temp = req.body.harga_item[i].split(".").join("")
+            
             total+=parseInt(total_temp)
-            item_dvd.push({
-               "judul" : e,
-               "jumlah" : req.body.jumlah_item[i],
-               "harga" : req.body.harga_item[i].split(".").join("")
+            db.collection('dvd').updateOne(
+                {_id:ObjectId(req.body.id[i])},
+                {$set:{
+                    stok : parseInt(req.body.stok[i])-parseInt(req.body.jumlah_item[i])
+                }}
+            ).then(()=>{
+                item_dvd.push({
+                    "id" : req.body.id[i],
+                    "judul" : e,
+                    "jumlah" : req.body.jumlah_item[i],
+                    "harga" : req.body.harga_item[i].split(".").join("")
+                 })
             })
         })
         db.collection('peminjaman').insertOne({
@@ -296,7 +306,17 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
             item : item_dvd,
             total_harga : total
         })
-        res.redirect('/peminjaman')
+        db.collection('keuangan').insertOne({
+            kategori : "Peminjaman",
+            status  : "Pemasukan",
+            catatan : "",
+            tanggal :  date.getFullYear()+"-"+(parseInt(date.getMonth())+1)+"-"+date.getDate(),
+            jumlah  : total
+        }).then(()=>{    
+            res.redirect('/peminjaman')
+        })
+            
+       
     })
 
     // 14. Detail Peminjaman
@@ -311,12 +331,75 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
 
     // 15. Selesai Peminjaman
     app.post('/selesai_peminjaman',(req,res)=>{
-        db.collection('peminjaman').updateOne(
-            {_id:ObjectId(req.body.id)}
-            ,{$set:{
-                status : "Kembali"
-            }})
-        res.redirect(`/detail_peminjaman/${req.body.id}`)
+        let peminjaman = db.collection('peminjaman').findOne({_id:ObjectId(req.body.id)}).then(result=>{
+            result.item.forEach(e=>{
+                db.collection('dvd').findOne({_id:ObjectId(e.id)}).then(result2=>{
+                    db.collection('dvd').updateOne(
+                        {_id:ObjectId(e.id)},
+                        {$set:{
+                            stok : parseInt(result2.stok)+parseInt(e.jumlah)
+                        }}
+                    )
+                })
+            })
+        }).then(()=>{
+            const date = new Date();
+            db.collection('peminjaman').updateOne(
+                {_id:ObjectId(req.body.id)}
+                ,{$set:{
+                    status : req.body.status,
+                    denda : req.body.denda
+                }})
+            if(parseInt(req.body.denda)>0){
+                    db.collection('keuangan').insertOne({
+                        kategori : "Denda",
+                        status  : "Pemasukan",
+                        catatan : "",
+                        tanggal :  date.getFullYear()+"-"+(parseInt(date.getMonth())+1)+"-"+date.getDate(),
+                        jumlah  : req.body.denda
+                    })
+                }
+        }).then(()=>{
+            res.redirect(`/detail_peminjaman/${req.body.id}`)
+        })
+    })
+
+    // 16. Keuangan Page
+    app.get('/keuangan',(req,res)=>{
+        const thousands = require('thousands');
+        if(req.cookies.session_cookie_id){
+            try{
+                db.collection('admin')
+                .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
+                    if(result){
+                        db.collection('keuangan').find().toArray()
+                        .then((result)=>{
+                            res.render('v_keuangan',{keuangan:result,thousands:thousands})
+                        })
+                        .catch((error)=>{
+                            console.log(error)
+                        });
+                    }
+                })
+            }catch(err){
+                res.send(error)
+            }
+        }else{
+            res.redirect('/')
+        }
+    })
+
+    // 17. Tambah Keuangan
+    app.post('/tambah_keuangan',(req,res)=>{
+        db.collection('keuangan').insertOne({
+            kategori : req.body.kategori,
+            status: req.body.status,
+            catatan : req.body.catatan,
+            tanggal : req.body.tanggal,
+            jumlah : req.body.jumlah
+        }).then(()=>{
+            res.redirect('/keuangan')
+        })
     })
 
     app.get('/logout',(req,res)=>{

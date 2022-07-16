@@ -1,17 +1,16 @@
 $(document).ready(function () {
-  $('#admin').DataTable();
+  $('#keuangan').DataTable();
 });
-
-let setUpdate = (id,nama,username,password)=>{
-  let u_id = document.querySelector('#u_id');
-  let u_nama = document.querySelector('#u_nama');
-  let u_username = document.querySelector('#u_username');
-  let u_password = document.querySelector('#u_password');
-  u_id.value=id;
-  u_nama.value=nama;
-  u_username.value=username;
-  u_password.value =password;
-}
+let setUpdate = (id,judul,harga,stok)=>{
+    let u_id = document.querySelector('#u_id');
+    let u_judul = document.querySelector('#u_judul');
+    let u_harga = document.querySelector('#u_harga');
+    let u_stok = document.querySelector('#u_stok');
+    u_id.value=id;
+    u_judul.value=judul;
+    u_harga.value=harga;
+    u_stok.value =stok;
+  }
 
 let confirmForm = name=>{
   Swal.fire({
