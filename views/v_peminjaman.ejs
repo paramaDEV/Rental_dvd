@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 <%-include('v_nav')%>
 <link rel="stylesheet" href="assets/dist/css/home.css" >
-  <body>
+  <body class="bg-light">
     <h3 class="mt-4 text-center">Data Peminjaman</h3>
     <a href="/v_add_peminjaman">
       <button class="btn btn-success btn-md ml-3" data-toggle="modal" data-target="#addData">Tambah Data</button>
@@ -38,8 +38,8 @@
                     <td><%=e.peminjam%></td>
                     <td><%=e.telepon%></td>
                     <td><%=e.alamat%></td>
-                    <td><%=date_a.getDate()%> <%=month[date_a.getMonth()]%> <%=date_a.getYear()%></td>
-                    <td><%=date_b.getDate()%> <%=month[date_b.getMonth()]%> <%=date_b.getYear()%></td>
+                    <td><%=date_a.getDate()%> <%=month[date_a.getMonth()]%> <%=date_a.getFullYear()%></td>
+                    <td><%=date_b.getDate()%> <%=month[date_b.getMonth()]%> <%=date_b.getFullYear()%></td>
                     <td>Rp <%=thousands(e.total_harga,'.')%></td>
                     <%if(!e.status){%>
                       <%if(date_now.getTime()>date_b.getTime()){%>

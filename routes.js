@@ -82,12 +82,24 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
 
     // 3. Home Page
     app.get('/home',(req,res)=>{
+        const thousands = require('thousands');
+
+        let peminjaman
+        let dvd
+        let keuangan
+        let getData = async ()=>{
+            peminjaman =  await db.collection('peminjaman').find().toArray()
+            dvd = await db.collection('dvd').find().toArray()
+            keuangan = await db.collection('keuangan').find().toArray()
+        }
         if(req.cookies.session_cookie_id){
             try{
                 db.collection('admin')
                 .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
                     if(result){
-                        res.render('v_home')
+                        getData().then(()=>{
+                            res.render('v_home',{peminjaman:peminjaman,dvd:dvd,keuangan:keuangan,thousands:thousands}) 
+                        })  
                     }
                 })
             }catch(err){
@@ -391,14 +403,22 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
 
     // 17. Tambah Keuangan
     app.post('/tambah_keuangan',(req,res)=>{
+        let date = new Date(req.body.tanggal)
         db.collection('keuangan').insertOne({
             kategori : req.body.kategori,
             status: req.body.status,
             catatan : req.body.catatan,
-            tanggal : req.body.tanggal,
-            jumlah : req.body.jumlah
+            tanggal : date.getFullYear()+"-"+(parseInt(date.getMonth())+1)+"-"+date.getDate(),
+            jumlah : parseInt(req.body.jumlah)
         }).then(()=>{
             res.redirect('/keuangan')
+        })
+    })
+
+    // 18. Data Keuangan
+    app.post('/get/keuangan',(req,res)=>{
+        db.collection('keuangan').find().toArray().then(result=>{
+            res.json(result)
         })
     })
 
@@ -417,9 +437,7 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
     app.listen(port,()=>{
         console.log(`Listening to port ${port}`)
     })
-
 }
-
 
 module.exports = {runRoutes}
 

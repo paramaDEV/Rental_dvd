@@ -7,7 +7,7 @@
 <script src="/node_modules/jquery/dist/jquery.min.js" ></script>
 <script src="/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/dist/js/keuangan.js"></script>
-  <body>
+  <body class="bg-light">
     <h3 class="mt-4 text-center">Data Keuangan </h3>
     <button class="btn btn-success btn-md ml-3" data-toggle="modal" data-target="#addData">Tambah Data</button>
     <center>
@@ -31,7 +31,7 @@
                       let month = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]%>
                     <tr>
                       <td><%=no%></td>
-                      <td><%=date.getDate()%> <%=month[date.getMonth()]%> <%=date.getYear()%></td>
+                      <td><%=date.getDate()%> <%=month[date.getMonth()]%> <%=date.getFullYear()%></td>
                       <td><%=e.kategori%></td>
                       <td><%=e.status%></td>
                       <td><%=e.catatan%></td>
@@ -39,7 +39,7 @@
                             class="text-success"
                         <%}else if(e.status=="Pengeluaran"){%>
                             class="text-danger"
-                        <%}%>><b>Rp <%= thousands(e.jumlah)%></b></td>
+                        <%}%>><b>Rp <%= thousands(e.jumlah,".")%></b></td>
                   </tr>
                 <%no++ })%>
               </tbody>
