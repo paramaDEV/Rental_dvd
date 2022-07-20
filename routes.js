@@ -9,7 +9,7 @@ const path = require('path')
 const app = express()
 const chart = require('chart.js');
 const Swal = require('sweetalert2')
-const port = 8001
+const port = process.env.PORT || 8001
 
 const image_storage = multer.diskStorage({
     destination : function(req,file,cb){

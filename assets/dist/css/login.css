@@ -2,10 +2,16 @@
     font-family: 'Russo';
     src:url('../../fonts/RussoOne-Regular.ttf');
   }
+body {
+  background-color: black;
+}
 body .main{
     background:url('../../background.jpg');
     background-size : 100%;
 }
-body .main .card .card-header{
+body main input{
+  opacity: 1.0;
+}
+body .main h3{
   font-family: 'Russo',sans-serif;
 }

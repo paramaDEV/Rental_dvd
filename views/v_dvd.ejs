@@ -29,7 +29,7 @@
                 <% dvd.reverse().forEach(function(e){ %>
                     <tr>
                       <th><%= no %></th>
-                      <td><img src="/assets/img/<%= e.gambar%>" height="100px"></td>
+                      <td><img src="/assets/img/<%= e.gambar%>" height="100px" style="border-radius:10px"></td>
                       <td><%= e.judul%></td>
                       <td>Rp <%=thousands(e.harga_sewa) %></td>
                       <td><%= e.stok%></td>

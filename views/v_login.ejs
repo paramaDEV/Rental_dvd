@@ -4,8 +4,8 @@
 <script src="/node_modules/jquery/dist/jquery.min.js" ></script>
   <body>
     <div class="main position-absolute w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-        <div class="card w-25 ">
-            <h3 class="card-header text-center">Cinemax Rental<br><img src="assets/logo.png" height="60px"> <img src="assets/bluray.png" height="30px"></h3>
+        <div class="rounded w-25 pt-3" style="background-color:rgba(255, 255, 255, 0.8)">
+            <h3 class="text-center">Cinemax Rental</h3>
             <div class="card-body">
               <% if(alert){ %>
               <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -17,14 +17,14 @@
               <% } %>
               <form action="/" method="POST">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Username</label>
-                  <input type="text" name="username" required class="form-control" id="exampleInputEmail1" >
+                  <label for="exampleInputEmail1 " class="font-weight-normal">Username :</label>
+                  <input type="text" name="username" required class="form-control rounded-pill" id="exampleInputEmail1" >
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputPassword1">Password</label>
-                  <input type="password"  name="password" required class="form-control" id="exampleInputPassword1">
+                  <label for="exampleInputPassword1" class="font-weight-normal">Password :</label>
+                  <input type="password"  name="password" required class="form-control rounded-pill" id="exampleInputPassword1">
                 </div>
-                <button type="submit" class="btn btn-info btn-sm">Login</button>
+                <center><button type="submit" class="btn btn-info btn-sm w-50 rounded-pill mt-3">Login</button></center>
               </form>
             </div>
         </div>
