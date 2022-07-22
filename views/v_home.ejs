@@ -52,6 +52,7 @@
                     }
                   }
                 })
+
               })
               %>
               <h2 class="text-white text-left font-weight-normal">
@@ -81,7 +82,7 @@
           <div class="bg-success w-50 p-3 rounded-pill shadow-lg m-3 mt-1 d-flex flex-row justify-content-around">
             <div class="">
               <h6 class="text-white font-weight-normal ">Pemasukan Bulan Ini</h6>
-              <h3 class="text-white font-weight-normal ">Rp <%=thousands(pemasukan_harian,'.')%><i
+              <h3 class="text-white font-weight-normal ">Rp <%=thousands(pemasukan_bulanan,'.')%><i
                     class="bi bi-chevron-double-up" style="font-size:30px;margin-left:10px;color: rgb(6, 88, 43);"></i>
               </h3>
             </div>
@@ -150,6 +151,7 @@
               pemasukan_bulanan.push(pemasukan)
               pengeluaran_bulanan.push(pengeluaran)
           }
+
           const labels = [
             'Januari',
             'Februari',
