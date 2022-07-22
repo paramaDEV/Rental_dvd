@@ -97,9 +97,12 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
                 db.collection('admin')
                 .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
                     if(result){
-                        getData().then(()=>{
+                         getData()
+                        .then(()=>{
                             res.render('v_home',{peminjaman:peminjaman,dvd:dvd,keuangan:keuangan,thousands:thousands}) 
-                        })  
+                        })
+                            
+                        
                     }
                 })
             }catch(err){
@@ -113,13 +116,17 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
     // 3. Dvd Page
     app.get('/dvd',(req,res)=>{
         const thousands = require('thousands');
+        let dvd
+        let getData = async ()=>{
+            dvd = await db.collection('dvd').find().toArray()
+        }
         if(req.cookies.session_cookie_id){
                 db.collection('admin')
                 .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
                     if(result){
-                        db.collection('dvd').find().toArray()
-                        .then((result)=>{
-                            res.render('v_dvd',{dvd:result,thousands:thousands})
+                        getData()
+                        .then(()=>{
+                            res.render('v_dvd',{dvd:dvd,thousands:thousands})
                         })
                         .catch((error)=>{
                             console.log(error)
