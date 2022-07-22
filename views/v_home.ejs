@@ -10,71 +10,26 @@
         <div class="rounded-pill bg-info m-3 mt-4 mb-0 p-3 pb-0 pl-4 d-flex flex-row justify-content-between">
           <div class="m-1 pt-1 w-25">
             <h6 class="text-white text-left font-weight-normal">Jumlah Peminjaman Aktif</h6>
-            <% let peminjaman_aktif=0 
-            let peminjaman_terlambat=0 
-            let dvd_dipinjam=0 
-            let dvd_tersedia=0 
-            let date_now=new Date() 
-            let date_now_a=date_now.getFullYear()+"-"+(parseInt(date_now.getMonth())+1)+"-"+date_now.getDate()
-            let pemasukan_harian=0
-            let pemasukan_bulanan=0 
-            let pengeluaran_harian=0 
-            let pengeluaran_bulanan=0
-              peminjaman.forEach(e=>{
-                let batas_pinjam = new Date(e.batas_pinjam)
-                if(!e.status){
-                  peminjaman_aktif++
-                  e.item.forEach(i=>{
-                    dvd_dipinjam += parseInt(i.jumlah)
-                  })
-                }
-                if(date_now.getTime()>batas_pinjam.getTime()){
-                  peminjaman_terlambat++
-                }
-                dvd.forEach(e=>{
-                  dvd_tersedia+=parseInt(e.stok)
-                })
-                dvd_tersedia = dvd_tersedia-dvd_dipinjam
-                keuangan.forEach(e=>{
-                  let date = e.tanggal.split("-")
-                  if(e.tanggal==date_now_a){
-                    if(e.status=="Pemasukan"){
-                      pemasukan_harian+=parseInt(e.jumlah)
-                    }else if(e.status=="Pengeluaran"){
-                      pengeluaran_harian+=parseInt(e.jumlah)
-                    }
-                  }
-                if((parseInt(date_now.getMonth())+1)==parseInt(date[1])){
-                  if(e.status=="Pemasukan"){
-                      pemasukan_bulanan+=parseInt(e.jumlah)
-                    }else if(e.status=="Pengeluaran"){
-                      pengeluaran_bulanan+=parseInt(e.jumlah)
-                    }
-                  }
-                })
-
-              })
-              %>
-              <h2 class="text-white text-left font-weight-normal">
-                <%=peminjaman_aktif%>
+              <h2 class="text-white text-left font-weight-normal peminjaman-aktif">
+                
               </h2>
           </div>
           <div class="m-1 pt-1" style="width:270px">
             <h6 class="text-white text-left font-weight-normal">Jumlah Peminjaman Terlambat</h6>
-            <h2 class="text-white text-left font-weight-normal">
-              <%=peminjaman_terlambat%>
+            <h2 class="text-white text-left font-weight-normal peminjaman-terlambat">
+              
             </h2>
           </div>
           <div class="m-1 pt-1" style="width:270px">
             <h6 class="text-white text-left font-weight-normal">Jumlah DVD Dipinjam</h6>
-            <h2 class="text-white text-left font-weight-normal">
-              <%=dvd_dipinjam%>
+            <h2 class="text-white text-left font-weight-normal dvd-dipinjam">
+              
             </h2>
           </div>
           <div class="m-1 pt-1" style="width:270px">
             <h6 class="text-white text-left font-weight-normal">Jumlah DVD Tersedia</h6>
-            <h2 class="text-white text-left font-weight-normal">
-              <%=dvd_tersedia%>
+            <h2 class="text-white text-left font-weight-normal dvd-tersedia">
+              
             </h2>
           </div>
         </div>
@@ -82,13 +37,13 @@
           <div class="bg-success w-50 p-3 rounded-pill shadow-lg m-3 mt-1 d-flex flex-row justify-content-around">
             <div class="">
               <h6 class="text-white font-weight-normal ">Pemasukan Bulan Ini</h6>
-              <h3 class="text-white font-weight-normal ">Rp <%=thousands(pemasukan_bulanan,'.')%><i
+              <h3 class="text-white font-weight-normal pemasukan-bulan-ini"><i
                     class="bi bi-chevron-double-up" style="font-size:30px;margin-left:10px;color: rgb(6, 88, 43);"></i>
               </h3>
             </div>
             <div class="">
               <h6 class="text-white font-weight-normal ">Pemasukan Hari Ini</h6>
-              <h3 class="text-white font-weight-normal ">Rp <%=thousands(pemasukan_harian,'.')%><i
+              <h3 class="text-white font-weight-normal pemasukan-hari-ini"><i
                     class="bi bi-chevron-double-up" style="font-size:30px;margin-left:10px;color: rgb(6, 88, 43);"></i>
               </h3>
             </div>
@@ -96,13 +51,13 @@
           <div class="bg-danger w-50 p-3 rounded-pill shadow-lg m-3 mt-1 d-flex flex-row justify-content-around">
             <div class="">
               <h6 class="text-white font-weight-normal ">Pengeluaran Bulan Ini</h6>
-              <h3 class="text-white font-weight-normal ">Rp <%=thousands(pengeluaran_bulanan,'.')%><i
+              <h3 class="text-white font-weight-normal pengeluaran-bulan-ini"><i
                     class="bi bi-chevron-double-down" style="font-size:30px;margin-left:10px;color: rgb(68, 5, 5);"></i>
               </h3>
             </div>
             <div class="">
-              <h6 class="text-white font-weight-normal ">Pemengeluaran Hari Ini</h6>
-              <h3 class="text-white font-weight-normal ">Rp <%=thousands(pengeluaran_harian,'.')%><i
+              <h6 class="text-white font-weight-normal ">Pengeluaran Hari Ini</h6>
+              <h3 class="text-white font-weight-normal pengeluaran-hari-ini"><i
                     class="bi bi-chevron-double-down"
                     style="font-size:30px;margin-left:10px;color:  rgb(68, 5, 5);"></i></h3>
             </div>
@@ -123,36 +78,12 @@
     <script type="module">
       import "../node_modules/chart.js/dist/chart.js"
       $(document).ready(() => {
-        let pemasukan_bulanan = []
-        let pengeluaran_bulanan = []
         let date_now = new Date()
         $.ajax({
-          url: '/get/keuangan',
+          url: '/get/keuangan_bulanan',
           method: 'POST',
           success: result => {
-            for (let i = 1; i <= 12; i++) {
-              let pemasukan = 0
-              let pengeluaran = 0
-              result.forEach(e => {
-                let tanggal = e.tanggal.split('-')
-                if (tanggal[0] == parseInt(date_now.getFullYear())) {
-
-                  if (i == tanggal[1]) {
-                    if (e.status == "Pemasukan") {
-                      pemasukan += parseInt(e.jumlah)
-
-                    } else if (e.status == "Pengeluaran") {
-                      pengeluaran += parseInt(e.jumlah)
-
-                    }
-                  }
-                }
-              })
-              pemasukan_bulanan.push(pemasukan)
-              pengeluaran_bulanan.push(pengeluaran)
-          }
-
-          const labels = [
+            const labels = [
             'Januari',
             'Februari',
             'Maret',
@@ -167,18 +98,18 @@
             'Desember',
           ];
 
-          const data = {
+            const data = {
             labels: labels,
             datasets: [{
               label: 'Pemasukan Bulanan',
               backgroundColor: 'rgb(15, 107, 40)',
               borderColor: 'rgb(15, 107, 40)',
-              data: pemasukan_bulanan
+              data: result.pemasukan
             }, {
               label: 'Pengeluaran Bulanan',
               backgroundColor: 'rgb(207, 56, 45)',
               borderColor: 'rgb(207, 56, 45)',
-              data: pengeluaran_bulanan,
+              data: result.pengeluaran
             }]
           };
 
@@ -198,13 +129,35 @@
               }
             },
           };
+
           const myChart = new Chart(
             document.getElementById('myChart'),
             config
           );
-        }
+
+          }
+        })
+        $.ajax({
+          url: '/rincian_keuangan',
+          method: 'POST',
+          success: result => {
+            $('.pemasukan-bulan-ini').html('Rp '+result.pemasukan_bulan_ini.toLocaleString('ID'))
+            $('.pemasukan-hari-ini').html('Rp '+result.pemasukan_hari_ini.toLocaleString('ID'))
+            $('.pengeluaran-bulan-ini').html('Rp '+result.pengeluaran_bulan_ini.toLocaleString('ID'))
+            $('.pengeluaran-hari-ini').html('Rp '+result.pengeluaran_hari_ini.toLocaleString('ID'))
+          }
+        })
+        $.ajax({
+          url: '/rincian_peminjaman',
+          method: 'POST',
+          success: result => {
+            $('.peminjaman-aktif').html('Rp '+result.peminjaman_aktif.toLocaleString('ID'))
+            $('.peminjaman-terlambat').html('Rp '+result.peminjaman_terlambat.toLocaleString('ID'))
+            $('.dvd-tersedia').html('Rp '+result.dvd_tersedia.toLocaleString('ID'))
+            $('.dvd-dipinjam').html('Rp '+result.dvd_dipinjam.toLocaleString('ID'))
+          }
+        })
       })
-  })
 
     </script>
     <%-include('v_foot')%>

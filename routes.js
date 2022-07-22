@@ -124,9 +124,9 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
                 db.collection('admin')
                 .findOne({_id: ObjectId(req.cookies.session_cookie_id )},(error,result)=>{
                     if(result){
-                        getData()
-                        .then(()=>{
-                            res.render('v_dvd',{dvd:dvd,thousands:thousands})
+                        db.collection('dvd').find().toArray()
+                        .then((result)=>{
+                            res.render('v_dvd',{dvd:result,thousands:thousands})
                         })
                         .catch((error)=>{
                             console.log(error)
@@ -422,13 +422,121 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
         })
     })
 
-    // 18. Data Keuangan
-    app.post('/get/keuangan',(req,res)=>{
+    // 18. Data Keuangan Bulanan
+    app.post('/get/keuangan_bulanan',(req,res)=>{
+        let pemasukan_bulanan = []
+        let pengeluaran_bulanan = []
+        let date_now = new Date()
         db.collection('keuangan').find().toArray().then(result=>{
-            res.json(result)
+            for (let i = 1; i <= 12; i++) {
+                let pemasukan = 0
+                let pengeluaran = 0
+                result.forEach(e => {
+                  let tanggal = e.tanggal.split('-')
+                  if (tanggal[0] == parseInt(date_now.getFullYear())) {
+  
+                    if (i == tanggal[1]) {
+                      if (e.status == "Pemasukan") {
+                        pemasukan += parseInt(e.jumlah)
+  
+                      } else if (e.status == "Pengeluaran") {
+                        pengeluaran += parseInt(e.jumlah)
+  
+                      }
+                    }
+                  }
+                })
+                pemasukan_bulanan.push(pemasukan)
+                pengeluaran_bulanan.push(pengeluaran)
+            }
+
+            let data = {
+                pemasukan : pemasukan_bulanan,
+                pengeluaran : pengeluaran_bulanan
+            }
+
+            res.json(data)
         })
     })
 
+    // 19. Data Keuangan
+    app.post('/rincian_keuangan',(req,res)=>{
+        let date_now=new Date() 
+        let date_now_a=date_now.getFullYear()+"-"+(parseInt(date_now.getMonth())+1)+"-"+date_now.getDate()
+        db.collection('keuangan').find().toArray()
+        .then(result=>{
+            let pemasukan_bulan_ini=0 
+            let pemasukan_hari_ini=0 
+            let pengeluaran_bulan_ini=0 
+            let pengeluaran_hari_ini=0 
+            result.forEach(e=>{
+                let date = e.tanggal.split("-")
+                if(e.tanggal==date_now_a){
+                  if(e.status=="Pemasukan"){
+                    pemasukan_hari_ini+=parseInt(e.jumlah)
+                  }else if(e.status=="Pengeluaran"){
+                    pengeluaran_hari_ini+=parseInt(e.jumlah)
+                  }
+                }
+              if((parseInt(date_now.getMonth())+1)==parseInt(date[1])){
+                if(e.status=="Pemasukan"){
+                    pemasukan_bulan_ini+=parseInt(e.jumlah)
+                  }else if(e.status=="Pengeluaran"){
+                    pengeluaran_bulan_ini+=parseInt(e.jumlah)
+                  }
+                }
+            })
+            let data = {
+                pemasukan_bulan_ini,
+                pemasukan_hari_ini,
+                pengeluaran_bulan_ini,
+                pengeluaran_hari_ini
+            }
+            res.json(data)
+        })
+    })
+
+    //20. Data Peminjaman
+    app.post('/rincian_peminjaman',(req,res)=>{
+        let peminjaman_aktif=0 
+        let peminjaman_terlambat=0
+        let dvd_dipinjam=0 
+        let dvd_tersedia=0 
+        let date_now=new Date() 
+        let date_now_a=date_now.getFullYear()+"-"+(parseInt(date_now.getMonth())+1)+"-"+date_now.getDate()
+        let peminjaman 
+        let dvd 
+        let getData=async ()=>{
+            peminjaman = await db.collection('peminjaman').find().toArray()
+            dvd = await db.collection('dvd').find().toArray()
+        }
+        
+        getData().then(()=>{
+            peminjaman.forEach(e=>{
+                let batas_pinjam = new Date(e.batas_pinjam)
+                if(!e.status){
+                  peminjaman_aktif++
+                  e.item.forEach(i=>{
+                    dvd_dipinjam += parseInt(i.jumlah)
+                  })
+                }
+                if(date_now.getTime()>batas_pinjam.getTime()){
+                  peminjaman_terlambat++
+                }
+                dvd.forEach(e=>{
+                  dvd_tersedia+=parseInt(e.stok)
+                })
+                dvd_tersedia = dvd_tersedia-dvd_dipinjam
+                let data = {
+                    peminjaman_aktif,
+                    peminjaman_terlambat,
+                    dvd_tersedia,
+                    dvd_dipinjam
+                }
+                res.json(data)
+            })
+        })
+    })
     app.get('/logout',(req,res)=>{
         const date = new Date();
         db.collection('admin').updateOne(
@@ -441,6 +549,7 @@ const runRoutes = (mongoclient,db_name,ObjectId)=>{
             })
            
     })
+
     app.listen(port,()=>{
         console.log(`Listening to port ${port}`)
     })
